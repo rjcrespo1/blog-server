@@ -8,6 +8,7 @@ const postRoute = require('./routes/posts');
 const categoryRoute = require('./routes/categories');
 const multer = require('multer');
 const path = require('path');
+const cors = require('cors');
 
 dotenv.config();
 app.use(express.json());
@@ -15,7 +16,8 @@ app.use('/images', express.static(path.join(__dirname, '/images')));
 
 
 mongoose
-    .connect(process.env.MONGO_URI, {
+    // .connect(process.env.MONGO_URI || "mongodb://localhost/backend-api", {
+    .connect("mongodb://localhost/backend-api", {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         // useCreateIndex: true,
@@ -37,6 +39,12 @@ mongoose
             res.status(200).json("File has been uploaded");
         });
 
+        app.use(
+            cors({
+              credentials: true,
+              origin: process.env.ORIGIN || "http://localhost:3000",
+            })
+          );
     app.use('/api/auth', authRoute);
     app.use('/api/users', userRoute);
     app.use('/api/posts', postRoute);
